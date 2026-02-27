@@ -1,28 +1,34 @@
 package com.swiftpulse.identity.controller;
 
-import com.swiftpulse.common.dto.UserDto;
 import com.swiftpulse.common.exception.ResourceNotFoundException;
 import com.swiftpulse.identity.dto.AuthResponse;
 import com.swiftpulse.identity.dto.LoginRequest;
 import com.swiftpulse.identity.dto.RegisterRequest;
 import com.swiftpulse.identity.service.AuthenticationService;
+import com.swiftpulse.identity.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/auth")
-@RequiredArgsConstructor
 @Tag(name = "Authentication", description = "Authentication and user management APIs")
 public class AuthenticationController {
     
+    private static final Logger log = LoggerFactory.getLogger(AuthenticationController.class);
+    
     private final AuthenticationService authenticationService;
+    private final JwtUtil jwtUtil;
+    
+    public AuthenticationController(AuthenticationService authenticationService, JwtUtil jwtUtil) {
+        this.authenticationService = authenticationService;
+        this.jwtUtil = jwtUtil;
+    }
     
     @PostMapping("/register")
     @Operation(summary = "Register a new user", description = "Creates a new user account and returns JWT token")
@@ -42,23 +48,23 @@ public class AuthenticationController {
     
     @GetMapping("/profile/{userId}")
     @Operation(summary = "Get user profile", description = "Retrieves user profile information")
-    public ResponseEntity<UserDto> getUserProfile(@PathVariable Long userId) {
+    public ResponseEntity<Object> getUserProfile(@PathVariable Long userId) {
         log.info("Profile request received for user ID: {}", userId);
-        UserDto userDto = authenticationService.getUserProfile(userId);
+        Object userDto = authenticationService.getUserProfile(userId);
         return ResponseEntity.ok(userDto);
     }
     
     @GetMapping("/validate")
     @Operation(summary = "Validate token", description = "Validates JWT token and returns user info")
-    public ResponseEntity<UserDto> validateToken(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<Object> validateToken(@RequestHeader("Authorization") String token) {
         String jwt = token.replace("Bearer ", "");
         Long userId = extractUserIdFromToken(jwt);
         
         if (userId == null) {
-            throw new ResourceNotFoundException("Invalid token");
+            throw new ResourceNotFoundException("Invalid token", "token");
         }
         
-        UserDto userDto = authenticationService.getUserProfile(userId);
+        Object userDto = authenticationService.getUserProfile(userId);
         return ResponseEntity.ok(userDto);
     }
     

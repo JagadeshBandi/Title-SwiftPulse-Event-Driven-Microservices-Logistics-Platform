@@ -1,15 +1,15 @@
 package com.swiftpulse.identity.service;
 
-import com.swiftpulse.common.dto.UserDto;
 import com.swiftpulse.common.exception.ResourceNotFoundException;
 import com.swiftpulse.identity.dto.AuthResponse;
 import com.swiftpulse.identity.dto.LoginRequest;
 import com.swiftpulse.identity.dto.RegisterRequest;
 import com.swiftpulse.identity.entity.User;
+import com.swiftpulse.identity.enums.UserType;
 import com.swiftpulse.identity.repository.UserRepository;
 import com.swiftpulse.identity.util.JwtUtil;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,15 +18,26 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Slf4j
+import java.time.LocalDateTime;
+
 @Service
-@RequiredArgsConstructor
+@Transactional
 public class AuthenticationService {
+    
+    private static final Logger log = LoggerFactory.getLogger(AuthenticationService.class);
     
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
+    
+    public AuthenticationService(UserRepository userRepository, PasswordEncoder passwordEncoder, 
+                               JwtUtil jwtUtil, AuthenticationManager authenticationManager) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
+        this.authenticationManager = authenticationManager;
+    }
     
     @Transactional
     public AuthResponse register(RegisterRequest request) {
@@ -41,7 +52,7 @@ public class AuthenticationService {
                 .lastName(request.getLastName())
                 .email(request.getEmail())
                 .phoneNumber(request.getPhoneNumber())
-                .userType(UserDto.UserType.CUSTOMER)
+                .userType(UserType.CUSTOMER)
                 .address(request.getAddress())
                 .city(request.getCity())
                 .state(request.getState())
@@ -94,25 +105,26 @@ public class AuthenticationService {
                 .build();
     }
     
-    public UserDto getUserProfile(Long userId) {
+    public Object getUserProfile(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", userId));
         
-        return UserDto.builder()
-                .id(user.getId())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .email(user.getEmail())
-                .phoneNumber(user.getPhoneNumber())
-                .userType(user.getUserType())
-                .address(user.getAddress())
-                .city(user.getCity())
-                .state(user.getState())
-                .zipCode(user.getZipCode())
-                .country(user.getCountry())
-                .isActive(user.getIsActive())
-                .createdAt(user.getCreatedAt())
-                .updatedAt(user.getUpdatedAt())
-                .build();
+        // Create a simple user profile response
+        return new Object() {
+            public final Long id = user.getId();
+            public final String firstName = user.getFirstName();
+            public final String lastName = user.getLastName();
+            public final String email = user.getEmail();
+            public final String phoneNumber = user.getPhoneNumber();
+            public final UserType userType = user.getUserType();
+            public final String address = user.getAddress();
+            public final String city = user.getCity();
+            public final String state = user.getState();
+            public final String zipCode = user.getZipCode();
+            public final String country = user.getCountry();
+            public final Boolean isActive = user.getIsActive();
+            public final LocalDateTime createdAt = user.getCreatedAt();
+            public final LocalDateTime updatedAt = user.getUpdatedAt();
+        };
     }
 }

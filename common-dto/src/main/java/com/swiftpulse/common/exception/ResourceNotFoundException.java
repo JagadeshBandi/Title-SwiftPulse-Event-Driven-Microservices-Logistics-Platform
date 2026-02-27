@@ -1,15 +1,21 @@
 package com.swiftpulse.common.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
-    public ResourceNotFoundException(String message) {
-        super(message);
+    private final String resourceName;
+    private final Object resourceValue;
+
+    public ResourceNotFoundException(String resourceName, Object resourceValue) {
+        super(String.format("%s not found with %s : '%s'", resourceName, 
+            resourceValue instanceof Long ? "id" : "value", resourceValue));
+        this.resourceName = resourceName;
+        this.resourceValue = resourceValue;
     }
-    
-    public ResourceNotFoundException(String resource, Long id) {
-        super(String.format("%s not found with id: %d", resource, id));
+
+    public String getResourceName() {
+        return resourceName;
     }
-    
-    public ResourceNotFoundException(String resource, String identifier) {
-        super(String.format("%s not found with identifier: %s", resource, identifier));
+
+    public Object getResourceValue() {
+        return resourceValue;
     }
 }

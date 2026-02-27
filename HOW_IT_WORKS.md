@@ -270,12 +270,12 @@ Web Portal displays:
 │  Estimated Delivery: Today 3:00 PM  │
 │                                     │
 │  Timeline:                          │
-│  ✅ Order Created - 9:00 AM         │
-│  ✅ Driver Assigned - 9:15 AM       │
-│  ✅ Picked Up - 10:30 AM            │
-│  🚚 In Transit - Current            │
-│  ⏳ Out for Delivery                 │
-│  ⏳ Delivered                        │
+│  [COMPLETED] Order Created - 9:00 AM         │
+│  [COMPLETED] Driver Assigned - 9:15 AM       │
+│  [COMPLETED] Picked Up - 10:30 AM            │
+│  [IN PROGRESS] In Transit - Current            │
+│  [PENDING] Out for Delivery                 │
+│  [PENDING] Delivered                        │
 └─────────────────────────────────────┘
 ```
 
