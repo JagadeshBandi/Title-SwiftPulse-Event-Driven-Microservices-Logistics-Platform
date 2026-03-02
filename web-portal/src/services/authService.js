@@ -9,7 +9,7 @@ const getAuthHeader = () => {
 
 const authService = {
   login: async (email, password) => {
-    const response = await axios.post(`${API_URL}/api/auth/login`, {
+    const response = await axios.post(`${API_URL}/api/auth/simple/login`, {
       email,
       password,
     });
@@ -17,7 +17,7 @@ const authService = {
   },
 
   register: async (userData) => {
-    const response = await axios.post(`${API_URL}/api/auth/register`, userData);
+    const response = await axios.post(`${API_URL}/api/auth/simple/register`, userData);
     return response.data;
   },
 

@@ -102,3 +102,19 @@ Thumbs.db
 uploads/
 logs/
 metrics/
+
+# Maven installation (local)
+apache-maven-3.9.6/
+
+# Node installer
+node-installer.msi
+
+# Test directories (disabled)
+**/src/test_disabled/
+
+# Lock files
+package-lock.json
+
+# Status files
+APPLICATION_STATUS.md
+LIVE_STATUS_REPORT.md

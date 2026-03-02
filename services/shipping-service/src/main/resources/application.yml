@@ -1,13 +1,11 @@
 server:
-  port: 8081
+  port: 8083
 
 spring:
   application:
-    name: identity-service
-  main:
-    allow-circular-references: true
+    name: shipping-service
   datasource:
-    url: jdbc:postgresql://localhost:5433/swiftpulse_identity
+    url: jdbc:postgresql://localhost:5435/swiftpulse_shipping
     username: ${DB_USERNAME:swiftpulse}
     password: ${DB_PASSWORD:password}
     driver-class-name: org.postgresql.Driver
@@ -20,17 +18,13 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
     open-in-view: false
-  security:
-    jwt:
-      secret: ${JWT_SECRET:mySecretKey123456789012345678901234567890}
-      expiration: ${JWT_EXPIRATION:86400000}
   kafka:
     bootstrap-servers: localhost:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     consumer:
-      group-id: identity-service
+      group-id: shipping-service
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
@@ -62,7 +56,7 @@ management:
 
 logging:
   level:
-    com.swiftpulse.identity: DEBUG
+    com.swiftpulse.shipping: DEBUG
     org.springframework.security: DEBUG
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
