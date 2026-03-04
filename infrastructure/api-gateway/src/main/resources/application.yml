@@ -7,13 +7,20 @@ spring:
   cloud:
     gateway:
       routes:
+        - id: identity-service-root
+          uri: http://localhost:8081
+          predicates:
+            - Path=/
+          filters:
+            - CircuitBreaker=identity-service
+            
         - id: identity-service
-          uri: lb://identity-service
+          uri: http://localhost:8081
           predicates:
             - Path=/api/auth/**,/api/users/**
           filters:
             - CircuitBreaker=identity-service
-            - RateLimit=100,1m
+            - RewritePath=/api/auth/(?<segment>.*), /api/auth/simple/${segment}
             
         - id: order-service
           uri: lb://order-service
@@ -21,8 +28,6 @@ spring:
             - Path=/api/orders/**
           filters:
             - CircuitBreaker=order-service
-            - RateLimit=50,1m
-            - AuthenticationFilter
             
         - id: shipping-service
           uri: lb://shipping-service
@@ -30,8 +35,6 @@ spring:
             - Path=/api/shipping/**
           filters:
             - CircuitBreaker=shipping-service
-            - RateLimit=75,1m
-            - AuthenticationFilter
             
         - id: tracking-service
           uri: lb://tracking-service
@@ -39,7 +42,6 @@ spring:
             - Path=/api/tracking/**
           filters:
             - CircuitBreaker=tracking-service
-            - RateLimit=200,1m
             
         - id: notification-service
           uri: lb://notification-service
@@ -47,7 +49,6 @@ spring:
             - Path=/api/notifications/**
           filters:
             - CircuitBreaker=notification-service
-            - RateLimit=25,1m
       
       circuitbreaker:
         configs:
@@ -60,12 +61,6 @@ spring:
       redis:
         host: localhost
         port: 6379
-        
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://localhost:8081
 
 eureka:
   client:
