@@ -23,14 +23,14 @@ spring:
             - RewritePath=/api/auth/(?<segment>.*), /api/auth/simple/${segment}
             
         - id: order-service
-          uri: lb://order-service
+          uri: http://localhost:8082
           predicates:
             - Path=/api/orders/**
           filters:
             - CircuitBreaker=order-service
             
         - id: shipping-service
-          uri: lb://shipping-service
+          uri: http://localhost:8083
           predicates:
             - Path=/api/shipping/**
           filters:
