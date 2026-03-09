@@ -2,11 +2,18 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import App from './App';
+import theme from './theme';
+
+// Add Inter font
+const link = document.createElement('link');
+link.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap';
+link.rel = 'stylesheet';
+document.head.appendChild(link);
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -14,34 +21,6 @@ const queryClient = new QueryClient({
       retry: 1,
       refetchOnWindowFocus: false,
     },
-  },
-});
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#1976d2',
-      light: '#42a5f5',
-      dark: '#1565c0',
-    },
-    secondary: {
-      main: '#dc004e',
-      light: '#ff5983',
-      dark: '#9a0036',
-    },
-    background: {
-      default: '#f5f5f5',
-      paper: '#ffffff',
-    },
-  },
-  typography: {
-    fontFamily: 'Roboto, Arial, sans-serif',
-    h1: { fontWeight: 600 },
-    h2: { fontWeight: 600 },
-    h3: { fontWeight: 600 },
-    h4: { fontWeight: 600 },
-    h5: { fontWeight: 600 },
-    h6: { fontWeight: 600 },
   },
 });
 
@@ -54,7 +33,30 @@ root.render(
         <BrowserRouter>
           <AuthProvider>
             <App />
-            <Toaster position="top-right" />
+            <Toaster 
+              position="top-right"
+              toastOptions={{
+                style: {
+                  background: '#ffffff',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                  color: '#1e293b',
+                },
+                success: {
+                  iconTheme: {
+                    primary: '#10b981',
+                    secondary: '#ffffff',
+                  },
+                },
+                error: {
+                  iconTheme: {
+                    primary: '#ef4444',
+                    secondary: '#ffffff',
+                  },
+                },
+              }}
+            />
           </AuthProvider>
         </BrowserRouter>
       </ThemeProvider>
